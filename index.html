@@ -43,4 +43,367 @@
       margin-bottom: 14px;
     }
     .header h2 {
-      margin: 0
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    /* بطاقة العداد */
+    .counter-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .counter-info { text-align: right; }
+    .counter-title { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .counter-val {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--accent-green);
+      line-height: 1.1;
+      text-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+    }
+    .counter-limit {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px dashed rgba(245, 158, 11, 0.4);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #fcd34d;
+      text-align: center;
+    }
+    .counter-limit strong { display: block; font-size: 16px; color: #fbbf24; }
+
+    /* أزرار التبديل */
+    .mode-switch {
+      display: flex;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 5px;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .btn-mode {
+      flex: 1;
+      padding: 11px 8px;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+    .btn-mode.active.reg {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+    }
+    .btn-mode.active.gate {
+      background: linear-gradient(135deg, #475569, #334155);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(71, 85, 105, 0.45);
+    }
+
+    /* إطار الكاميرا */
+    .scanner-wrapper {
+      position: relative;
+      background: #000;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 2px solid rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.15);
+    }
+    #reader { width: 100%; border: none !important; }
+    #reader video { border-radius: 18px; object-fit: cover; }
+
+    /* خانة الإدخال اليدوي */
+    .manual-box {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+    .manual-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 17px;
+      padding: 10px 14px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .manual-input::placeholder { color: #64748b; font-size: 14px; }
+    .manual-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .manual-btn:active { transform: scale(0.96); }
+
+    /* بطاقة النتيجة */
+    #result-box {
+      display: none;
+      margin-top: 14px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      animation: popIn 0.25s ease-out;
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.92); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .worker-name { font-size: 23px; font-weight: 800; margin: 4px 0 6px; display: block; }
+    .bg-green { background: linear-gradient(135deg, #059669, #047857); }
+    .bg-red { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .bg-orange { background: linear-gradient(135deg, #d97706, #b45309); }
+    .bg-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+
+    /* التوقيع أسفل الصفحة */
+    .signature {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .sig-text {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .sig-name {
+      font-size: 14px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 12px rgba(129, 140, 248, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- العنوان الرئيسي -->
+    <div class="header">
+      <span style="font-size: 24px;">⚡</span>
+      <h2>منظومة المسح السريع للعمال</h2>
+    </div>
+
+    <!-- كارت العداد الذكي -->
+    <div class="counter-card">
+      <div class="counter-info">
+        <div class="counter-title">العمال المسجلون اليوم</div>
+        <div class="counter-val" id="scanCounter">0</div>
+      </div>
+      <div class="counter-limit">
+        الهدف اليومي
+        <strong>80 عامل</strong>
+      </div>
+    </div>
+
+    <!-- أزرار اختيار الوضع -->
+    <div class="mode-switch">
+      <button id="btnReg" class="btn-mode active reg" onclick="setMode('register')">
+        <span>📝</span> تسجيل الحضور
+      </button>
+      <button id="btnGate" class="btn-mode gate" onclick="setMode('gate')">
+        <span>🛡️</span> فحص البوابة
+      </button>
+    </div>
+
+    <!-- إطار الكاميرا المستمرة -->
+    <div class="scanner-wrapper">
+      <div id="reader"></div>
+    </div>
+
+    <!-- خانة الإدخال اليدوي -->
+    <div class="manual-box">
+      <input type="number" id="manualCode" class="manual-input" placeholder="🔢 أدخل كود العامل يدوياً..." onkeydown="handleEnter(event)">
+      <button class="manual-btn" onclick="submitManual()">
+        <span>تأكيد</span> ➔
+      </button>
+    </div>
+
+    <!-- شاشة إظهار النتائج -->
+    <div id="result-box">
+      <div id="res-msg" style="font-size: 15px; opacity: 0.95;"></div>
+      <span class="worker-name" id="res-name"></span>
+      <div id="res-code" style="font-size: 13px; opacity: 0.85;"></div>
+    </div>
+
+    <!-- توقيع Meto المضيء -->
+    <div class="signature">
+      <span class="sig-text">Powered by</span>
+      <span class="sig-name">Meto 🚀</span>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNOxeoRl1YFT9XWICnA8szEKJ75W1HnEnwp0DgmAXexYCErVjcphIYNMp-7nRt8JXO/exec";
+    
+    var currentMode = 'register';
+    var isProcessing = false;
+    var scannedCount = parseInt(localStorage.getItem('todayWorkerCount') || '0', 10);
+    document.getElementById('scanCounter').innerText = scannedCount;
+
+    function setMode(mode) {
+      currentMode = mode;
+      var btnReg = document.getElementById('btnReg');
+      var btnGate = document.getElementById('btnGate');
+
+      if (mode === 'register') {
+        btnReg.classList.add('active', 'reg');
+        btnGate.classList.remove('active', 'gate');
+      } else {
+        btnGate.classList.add('active', 'gate');
+        btnReg.classList.remove('active', 'reg');
+      }
+      document.getElementById('result-box').style.display = 'none';
+    }
+
+    function playBeep(freq, duration, type) {
+      try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        setTimeout(function() { osc.stop(); ctx.close(); }, duration);
+      } catch(e) {}
+    }
+
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        submitManual();
+      }
+    }
+
+    function submitManual() {
+      var input = document.getElementById('manualCode');
+      var code = input.value.trim();
+      if (!code) return;
+      handleCodeExecution(code);
+      input.value = '';
+    }
+
+    function onScanSuccess(decodedText) {
+      handleCodeExecution(decodedText);
+    }
+
+    function handleCodeExecution(code) {
+      if (isProcessing) return;
+      isProcessing = true;
+
+      var box = document.getElementById('result-box');
+      box.style.display = 'block';
+      box.className = '';
+      box.style.backgroundColor = '#1e293b';
+      document.getElementById('res-msg').innerText = '⏳ جاري المزامنة مع الشيت...';
+      document.getElementById('res-name').innerText = '';
+      document.getElementById('res-code').innerText = 'كود: ' + code;
+
+      var targetUrl = SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&mode=' + currentMode;
+
+      fetch(targetUrl)
+        .then(res => res.json())
+        .then(res => {
+          document.getElementById('res-msg').innerText = res.message;
+          document.getElementById('res-name').innerText = res.workerName || '';
+
+          if (res.status === 'registered_ok' || res.status === 'allowed') {
+            if (res.status === 'registered_ok') {
+              scannedCount++;
+              localStorage.setItem('todayWorkerCount', scannedCount);
+              document.getElementById('scanCounter').innerText = scannedCount;
+            }
+
+            if (scannedCount >= 80 && currentMode === 'register') {
+              box.className = 'bg-purple';
+              document.getElementById('res-msg').innerText = '🚨 تنبيه: تم الوصول للحد الأقصى (80 عامل)!';
+              playBeep(1200, 700, 'sawtooth');
+              if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+            } else {
+              box.className = 'bg-green';
+              playBeep(900, 150, 'sine');
+            }
+          } else if (res.status === 'denied' || res.status === 'not_found') {
+            box.className = 'bg-red';
+            playBeep(250, 500, 'sawtooth');
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+          } else {
+            box.className = 'bg-orange';
+            playBeep(500, 300, 'square');
+            if (navigator.vibrate) navigator.vibrate(300);
+          }
+
+          setTimeout(function() { 
+            isProcessing = false; 
+            box.style.display = 'none';
+          }, 1500);
+        })
+        .catch(err => {
+          box.className = 'bg-red';
+          document.getElementById('res-msg').innerText = '❌ خطأ في الاتصال بالسيرفر!';
+          setTimeout(function() { isProcessing = false; }, 2000);
+        });
+    }
+
+    var html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 15, qrbox: { width: 250, height: 250 } },
+      onScanSuccess
+    ).catch(err => {
+      console.error("Camera start error", err);
+    });
+  </script>
+</body>
+</html>
