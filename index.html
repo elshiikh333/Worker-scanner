@@ -73,6 +73,7 @@
       color: var(--accent-green);
       line-height: 1.1;
       text-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+      cursor: pointer;
     }
     .counter-limit {
       background: rgba(245, 158, 11, 0.1);
@@ -228,17 +229,16 @@
 <body>
 
   <div class="container">
-    <!-- العنوان الرئيسي -->
     <div class="header">
       <span style="font-size: 24px;">⚡</span>
       <h2>منظومة المسح السريع للعمال</h2>
     </div>
 
-    <!-- كارت العداد الذكي -->
+    <!-- كارت العداد الذكي (تصفير يومي تلقائي) -->
     <div class="counter-card">
       <div class="counter-info">
         <div class="counter-title">العمال المسجلون اليوم</div>
-        <div class="counter-val" id="scanCounter">0</div>
+        <div class="counter-val" id="scanCounter" title="انقر مرتين للتصفير اليدوي">0</div>
       </div>
       <div class="counter-limit">
         الهدف اليومي
@@ -246,7 +246,6 @@
       </div>
     </div>
 
-    <!-- أزرار اختيار الوضع -->
     <div class="mode-switch">
       <button id="btnReg" class="btn-mode active reg" onclick="setMode('register')">
         <span>📝</span> تسجيل الحضور
@@ -256,12 +255,10 @@
       </button>
     </div>
 
-    <!-- إطار الكاميرا المستمرة -->
     <div class="scanner-wrapper">
       <div id="reader"></div>
     </div>
 
-    <!-- خانة الإدخال اليدوي -->
     <div class="manual-box">
       <input type="number" id="manualCode" class="manual-input" placeholder="🔢 أدخل كود العامل يدوياً..." onkeydown="handleEnter(event)">
       <button class="manual-btn" onclick="submitManual()">
@@ -269,14 +266,12 @@
       </button>
     </div>
 
-    <!-- شاشة إظهار النتائج -->
     <div id="result-box">
       <div id="res-msg" style="font-size: 15px; opacity: 0.95;"></div>
       <span class="worker-name" id="res-name"></span>
       <div id="res-code" style="font-size: 13px; opacity: 0.85;"></div>
     </div>
 
-    <!-- توقيع Meto المضيء -->
     <div class="signature">
       <span class="sig-text">Powered by</span>
       <span class="sig-name">Meto 🚀</span>
@@ -288,8 +283,36 @@
     
     var currentMode = 'register';
     var isProcessing = false;
-    var scannedCount = parseInt(localStorage.getItem('todayWorkerCount') || '0', 10);
+
+    // دالة جلب تاريخ اليوم بصيغة YYYY-MM-DD لمطابقة اليوم الفعلي
+    function getTodayKey() {
+      var d = new Date();
+      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+
+    // فحص التاريخ الحالي: إذا كان يوماً جديداً يتم تصفير العداد فوراً
+    var todayKey = getTodayKey();
+    var savedDate = localStorage.getItem('workerCountDate');
+    var scannedCount = 0;
+
+    if (savedDate === todayKey) {
+      scannedCount = parseInt(localStorage.getItem('todayWorkerCount') || '0', 10);
+    } else {
+      scannedCount = 0;
+      localStorage.setItem('workerCountDate', todayKey);
+      localStorage.setItem('todayWorkerCount', '0');
+    }
     document.getElementById('scanCounter').innerText = scannedCount;
+
+    // إمكانية التصفير اليدوي بالنقر المزدوج على رقم العداد
+    document.getElementById('scanCounter').addEventListener('dblclick', function() {
+      if (confirm('هل تريد إعادة تعيين عداد اليوم إلى 0؟')) {
+        scannedCount = 0;
+        localStorage.setItem('workerCountDate', getTodayKey());
+        localStorage.setItem('todayWorkerCount', '0');
+        document.getElementById('scanCounter').innerText = '0';
+      }
+    });
 
     function setMode(mode) {
       currentMode = mode;
@@ -360,6 +383,12 @@
 
           if (res.status === 'registered_ok' || res.status === 'allowed') {
             if (res.status === 'registered_ok') {
+              // التحقق من اليوم قبل الزيادة
+              var currentDayKey = getTodayKey();
+              if (localStorage.getItem('workerCountDate') !== currentDayKey) {
+                scannedCount = 0;
+                localStorage.setItem('workerCountDate', currentDayKey);
+              }
               scannedCount++;
               localStorage.setItem('todayWorkerCount', scannedCount);
               document.getElementById('scanCounter').innerText = scannedCount;
