@@ -284,9 +284,9 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNOxeoRl1YFT9XWICnA8szEKJ75W1HnEnwp0DgmAXexYCErVjcphIYNMp-7nRt8JXO/exec";
+    // الرابط الجديد المُحدث من Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNgDtztPd_HyMbqU5TDbn36Ag2fWDUyv5QOmhJoUjk7J02jZEYz7HuvSNOfVJu7szj/exec";
 
-    // قائمة الأكواد المعتمدة الجديدة لمنع أي كود قديم محفوظ على الموبايل
     const VALID_PINS = ["1111", "2222", "3333", "4444", "9090"];
 
     var activePin = '';
@@ -346,10 +346,9 @@
       var btn = document.getElementById('loginBtn');
       var err = document.getElementById('login-err');
 
-      // رفض فوري للأكواد القديمة (مثل 1010، 2020) حتى لو كان السيرفر لم يُنشر بعد
       if (VALID_PINS.indexOf(pin) === -1) {
         localStorage.removeItem('savedPin');
-        err.innerText = '❌ كود الدخول غير صحيح! استخدم الأكواد المعتمدة الجديدة.';
+        err.innerText = '❌ كود الدخول غير صحيح! استخدم الأكواد المعتمدة الجديدة (1111، 2222، 3333، 4444، 9090).';
         err.style.display = 'block';
         return;
       }
@@ -371,7 +370,7 @@
             showScanner();
           } else {
             localStorage.removeItem('savedPin');
-            err.innerText = data.message || '❌ كود الدخول غير مفعل على السيرفر! تأكد من عمل New Deployment في Apps Script.';
+            err.innerText = data.message || '❌ كود الدخول غير مفعل!';
             err.style.display = 'block';
           }
         })
@@ -498,7 +497,6 @@
         });
     }
 
-    // مسح أي كود قديم محفوظ تلقائياً عند فتح الصفحة
     window.addEventListener('load', function() {
       var saved = localStorage.getItem('savedPin');
       if (saved && VALID_PINS.indexOf(saved) !== -1) {
