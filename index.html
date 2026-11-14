@@ -3,23 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>منظومة المسح الذكي للعقود</title>
+  <title>منظومة المسح المزدوج للعقود الأربعة</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root {
       --bg-main: #0b0f19;
-      --card-bg: rgba(22, 30, 49, 0.8);
-      --border-color: rgba(255, 255, 255, 0.08);
+      --card-bg: rgba(22, 30, 49, 0.88);
+      --border-color: rgba(255, 255, 255, 0.09);
       --accent-green: #10b981;
+      --accent-blue: #0284c7;
+      --accent-cyan: #38bdf8;
       --text-muted: #94a3b8;
     }
 
     * { box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', Tahoma, system-ui, sans-serif;
       margin: 0;
       padding: 16px 14px 28px;
-      background: radial-gradient(circle at top, #1e1b4b 0%, var(--bg-main) 60%);
+      background: radial-gradient(circle at top, #1e1b4b 0%, var(--bg-main) 65%);
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
@@ -29,65 +31,35 @@
 
     .container { width: 100%; max-width: 420px; }
 
-    /* الهيدر */
     .header {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .header h2 {
       margin: 0;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
       background: linear-gradient(135deg, #38bdf8, #818cf8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    /* شريط معلومات العقد والمشرف */
-    .role-bar {
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 12px;
-      padding: 8px 14px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .role-badge {
-      font-size: 15px;
-      font-weight: 800;
-      color: #38bdf8;
-    }
-    .btn-logout {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* شاشة تسجيل الدخول بـ PIN */
+    /* شاشة تسجيل الدخول */
     #login-screen {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
       border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 26px 20px;
+      border-radius: 18px;
+      padding: 24px 18px;
       text-align: center;
-      margin-top: 25px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .pin-input {
       width: 100%;
-      padding: 14px;
-      font-size: 22px;
+      padding: 13px;
+      font-size: 24px;
       letter-spacing: 6px;
       text-align: center;
       border-radius: 12px;
@@ -101,21 +73,42 @@
     .pin-input:focus { border-color: #38bdf8; }
     .btn-login {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: bold;
       background: linear-gradient(135deg, #2563eb, #4f46e5);
       color: white;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
     }
 
-    /* بطاقة العداد */
+    /* شريط المستخدم النشط */
+    .role-bar {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 9px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .role-badge { font-size: 14px; font-weight: 800; color: #38bdf8; }
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* كارت العداد */
     .counter-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
       border: 1px solid var(--border-color);
       border-radius: 16px;
       padding: 12px 18px;
@@ -123,10 +116,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
-    .counter-info { text-align: right; }
-    .counter-title { font-size: 13px; color: var(--text-muted); font-weight: 500; }
     .counter-val {
       font-size: 34px;
       font-weight: 900;
@@ -135,16 +125,16 @@
       text-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
       cursor: pointer;
     }
-    .counter-limit {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px dashed rgba(245, 158, 11, 0.4);
-      padding: 6px 12px;
+    .stage-badge {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px dashed rgba(56, 189, 248, 0.4);
+      padding: 7px 12px;
       border-radius: 10px;
       font-size: 12px;
-      color: #fcd34d;
+      color: #bae6fd;
       text-align: center;
     }
-    .counter-limit strong { display: block; font-size: 16px; color: #fbbf24; }
+    .stage-badge strong { display: block; font-size: 14px; color: #38bdf8; margin-top: 2px; }
 
     /* إطار الكاميرا */
     .scanner-wrapper {
@@ -153,12 +143,11 @@
       border-radius: 20px;
       overflow: hidden;
       border: 2px solid rgba(56, 189, 248, 0.5);
-      box-shadow: 0 0 24px rgba(56, 189, 248, 0.15);
     }
     #reader { width: 100%; border: none !important; }
     #reader video { border-radius: 18px; object-fit: cover; }
 
-    /* خانة الإدخال اليدوي */
+    /* الإدخال اليدوي */
     .manual-box {
       margin-top: 14px;
       display: flex;
@@ -167,7 +156,6 @@
       border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 6px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
     }
     .manual-input {
       flex: 1;
@@ -175,20 +163,18 @@
       border: none;
       outline: none;
       color: #fff;
-      font-size: 17px;
-      padding: 10px 14px;
+      font-size: 16px;
+      padding: 10px;
       text-align: center;
-      font-weight: 600;
+      font-weight: bold;
     }
-    .manual-input::placeholder { color: #64748b; font-size: 14px; }
     .manual-btn {
       background: linear-gradient(135deg, #10b981, #059669);
       border: none;
       border-radius: 10px;
       padding: 10px 18px;
       color: white;
-      font-size: 15px;
-      font-weight: 700;
+      font-weight: bold;
       cursor: pointer;
     }
 
@@ -196,25 +182,33 @@
     #result-box {
       display: none;
       margin-top: 14px;
-      padding: 16px 20px;
+      padding: 16px 18px;
       border-radius: 16px;
       text-align: center;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
     }
-    .worker-name { font-size: 23px; font-weight: 800; margin: 4px 0 6px; display: block; }
+    .worker-name { font-size: 22px; font-weight: 800; margin: 5px 0; display: block; }
+    .contract-pill {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
     .bg-green { background: linear-gradient(135deg, #059669, #047857); }
-    .bg-red { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-    .bg-orange { background: linear-gradient(135deg, #d97706, #b45309); }
-    .bg-purple { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+    .bg-blue  { background: linear-gradient(135deg, #0284c7, #0369a1); }
+    .bg-red   { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .bg-orange{ background: linear-gradient(135deg, #d97706, #b45309); }
 
-    /* التوقيع */
     .signature {
       margin-top: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 7px 18px;
+      padding: 6px 16px;
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -222,9 +216,7 @@
       margin-left: auto;
       margin-right: auto;
     }
-    .sig-text { font-size: 13px; color: #94a3b8; font-weight: 500; }
     .sig-name {
-      font-size: 14px;
       font-weight: 800;
       background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
       -webkit-background-clip: text;
@@ -237,35 +229,34 @@
   <div class="container">
     <div class="header">
       <span style="font-size: 24px;">⚡</span>
-      <h2>منظومة المسح السريع للعقود</h2>
+      <h2>منظومة المسح المزدوج للعقود الأربعة</h2>
     </div>
 
-    <!-- شاشة الدخول بالكود السري (PIN) -->
+    <!-- 1. شاشة تسجيل الدخول -->
     <div id="login-screen">
-      <div style="font-size: 38px; margin-bottom: 6px;">🔐</div>
-      <h3 style="margin: 0 0 6px; color: #f8fafc;">تسجيل دخول المشرف / الأمن</h3>
-      <p style="margin: 0; font-size: 13px; color: #94a3b8;">أدخل الكود السري (PIN) الخاص بعقدك أو البوابة</p>
+      <div style="font-size: 34px; margin-bottom: 6px;">🔐</div>
+      <h3 style="margin: 0 0 6px;">دخول الخدمات الإدارية / الأمن</h3>
+      <p style="margin: 0; font-size: 13px; color: var(--text-muted);">أدخل الكود السري (PIN) الخاص بك</p>
       <input type="password" inputmode="numeric" id="pinInput" class="pin-input" placeholder="••••" onkeydown="if(event.key==='Enter') loginWithPin()">
       <button class="btn-login" id="loginBtn" onclick="loginWithPin()">دخول للمنظومة</button>
       <div id="login-err" style="color: #f87171; font-size: 14px; margin-top: 10px; display: none; font-weight: bold;"></div>
     </div>
 
-    <!-- واجهة المسح الرئيسية (تظهر بعد الدخول) -->
+    <!-- 2. شاشة المسح الرئيسية -->
     <div id="app-screen" style="display: none;">
       <div class="role-bar">
         <span class="role-badge" id="activeRoleName">...</span>
         <button class="btn-logout" onclick="logoutPin()">🔄 تغيير الحساب</button>
       </div>
 
-      <!-- العداد يظهر للمشرفين ويختفي في وضع البوابة -->
-      <div class="counter-card" id="counterCard">
-        <div class="counter-info">
-          <div class="counter-title">العمال المسجلون اليوم</div>
+      <div class="counter-card">
+        <div style="text-align: right;">
+          <div style="font-size: 13px; color: var(--text-muted);" id="counterLabel">إجمالي المسح اليوم</div>
           <div class="counter-val" id="scanCounter" title="انقر مرتين للتصفير اليدوي">0</div>
         </div>
-        <div class="counter-limit">
-          الهدف اليومي
-          <strong id="targetLimit">80 عامل</strong>
+        <div class="stage-badge">
+          المرحلة النشطة
+          <strong id="stageName">الكل (4 عقود)</strong>
         </div>
       </div>
 
@@ -279,14 +270,15 @@
       </div>
 
       <div id="result-box">
-        <div id="res-msg" style="font-size: 15px; opacity: 0.95;"></div>
+        <div id="res-msg" style="font-size: 15px; font-weight: 600;"></div>
         <span class="worker-name" id="res-name"></span>
-        <div id="res-code" style="font-size: 13px; opacity: 0.85;"></div>
+        <div id="res-contract" class="contract-pill" style="display: none;"></div>
+        <div id="res-code" style="font-size: 12px; opacity: 0.85; margin-top: 4px;"></div>
       </div>
     </div>
 
     <div class="signature">
-      <span class="sig-text">Powered by</span>
+      <span style="font-size: 13px; color: #94a3b8;">Powered by</span>
       <span class="sig-name">Meto 🚀</span>
     </div>
   </div>
@@ -294,12 +286,10 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNOxeoRl1YFT9XWICnA8szEKJ75W1HnEnwp0DgmAXexYCErVjcphIYNMp-7nRt8JXO/exec";
 
-    var activePin = localStorage.getItem('savedPin') || '';
-    var activeRole = localStorage.getItem('savedRole') || '';
-    var activeName = localStorage.getItem('savedName') || '';
-    var activeKey = localStorage.getItem('savedKey') || '';
-    var activeLimit = parseInt(localStorage.getItem('savedLimit') || '80', 10);
-
+    var activePin = '';
+    var activeRole = '';
+    var activeName = '';
+    var activeKey = '';
     var isProcessing = false;
     var scannedCount = 0;
     var html5QrCode = null;
@@ -309,40 +299,38 @@
       return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
     }
 
-    function loadContractCounter() {
-      var todayKey = getTodayKey();
+    function loadCounter() {
       var dateKey = 'date_' + activeKey;
       var countKey = 'count_' + activeKey;
+      var today = getTodayKey();
 
-      if (localStorage.getItem(dateKey) === todayKey) {
+      if (localStorage.getItem(dateKey) === today) {
         scannedCount = parseInt(localStorage.getItem(countKey) || '0', 10);
       } else {
         scannedCount = 0;
-        localStorage.setItem(dateKey, todayKey);
+        localStorage.setItem(dateKey, today);
         localStorage.setItem(countKey, '0');
       }
       document.getElementById('scanCounter').innerText = scannedCount;
     }
 
-    function incrementContractCounter() {
-      var todayKey = getTodayKey();
+    function incrementCounter() {
       var dateKey = 'date_' + activeKey;
       var countKey = 'count_' + activeKey;
+      var today = getTodayKey();
 
-      if (localStorage.getItem(dateKey) !== todayKey) {
+      if (localStorage.getItem(dateKey) !== today) {
         scannedCount = 0;
-        localStorage.setItem(dateKey, todayKey);
+        localStorage.setItem(dateKey, today);
       }
       scannedCount++;
       localStorage.setItem(countKey, scannedCount);
       document.getElementById('scanCounter').innerText = scannedCount;
     }
 
-    // تصفير يدوي بالنقر المزدوج
     document.getElementById('scanCounter').addEventListener('dblclick', function() {
       if (confirm('هل تريد تصفير عداد (' + activeName + ') لليوم؟')) {
         scannedCount = 0;
-        localStorage.setItem('date_' + activeKey, getTodayKey());
         localStorage.setItem('count_' + activeKey, '0');
         document.getElementById('scanCounter').innerText = '0';
       }
@@ -353,61 +341,56 @@
       if (!pin) return;
 
       var btn = document.getElementById('loginBtn');
-      var errBox = document.getElementById('login-err');
+      var err = document.getElementById('login-err');
       btn.innerText = '⏳ جاري التحقق...';
-      errBox.style.display = 'none';
+      err.style.display = 'none';
 
       fetch(SCRIPT_URL + '?action=login&pin=' + encodeURIComponent(pin))
         .then(res => res.json())
-        .then(res => {
+        .then(data => {
           btn.innerText = 'دخول للمنظومة';
-          if (res.status === 'ok') {
+          if (data.status === 'ok') {
             activePin = pin;
-            activeRole = res.role;
-            activeName = res.name;
-            activeKey = res.key;
-            activeLimit = res.limit || 80;
+            activeRole = data.role;
+            activeName = data.name;
+            activeKey = data.key;
 
-            localStorage.setItem('savedPin', activePin);
-            localStorage.setItem('savedRole', activeRole);
-            localStorage.setItem('savedName', activeName);
-            localStorage.setItem('savedKey', activeKey);
-            localStorage.setItem('savedLimit', activeLimit);
-
-            showScannerScreen();
+            localStorage.setItem('savedPin', pin);
+            showScanner();
           } else {
-            errBox.innerText = res.message || '❌ كود غير صحيح!';
-            errBox.style.display = 'block';
+            err.innerText = data.message || '❌ كود الدخول غير صحيح!';
+            err.style.display = 'block';
           }
         })
         .catch(() => {
           btn.innerText = 'دخول للمنظومة';
-          errBox.innerText = '❌ تعذر الاتصال بالسيرفر، تأكد من الإنترنت!';
-          errBox.style.display = 'block';
+          err.innerText = '❌ تعذر الاتصال بالسيرفر، تأكد من الإنترنت!';
+          err.style.display = 'block';
         });
     }
 
-    function showScannerScreen() {
+    function showScanner() {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app-screen').style.display = 'block';
 
-      if (activeRole === 'gate') {
+      if (activeRole === 'security') {
         document.getElementById('activeRoleName').innerText = '🛡️ ' + activeName;
-        document.getElementById('counterCard').style.display = 'none';
+        document.getElementById('counterLabel').innerText = 'حضور مؤكد عبر البوابة اليوم';
+        document.getElementById('stageName').innerText = 'المرحلة 2: تأكيد الأمن';
       } else {
-        document.getElementById('activeRoleName').innerText = '📝 مشرف ' + activeName;
-        document.getElementById('counterCard').style.display = 'flex';
-        document.getElementById('targetLimit').innerText = activeLimit + ' عامل';
-        loadContractCounter();
+        document.getElementById('activeRoleName').innerText = '📋 ' + activeName;
+        document.getElementById('counterLabel').innerText = 'مسح إداري أولي اليوم';
+        document.getElementById('stageName').innerText = 'المرحلة 1: خدمات إدارية';
       }
 
+      loadCounter();
       startCamera();
     }
 
     function logoutPin() {
       localStorage.removeItem('savedPin');
       if (html5QrCode) {
-        html5QrCode.stop().catch(() => {});
+        html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
       }
       document.getElementById('app-screen').style.display = 'none';
       document.getElementById('login-screen').style.display = 'block';
@@ -415,27 +398,27 @@
     }
 
     function startCamera() {
-      if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-      }
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 15, qrbox: { width: 250, height: 250 } },
-        function(decodedText) { handleCodeExecution(decodedText); }
-      ).catch(err => console.error("Camera error", err));
+      try {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("reader");
+        }
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 15, qrbox: { width: 250, height: 250 } },
+          function(code) { handleScan(code); }
+        ).catch(e => console.error("Camera error:", e));
+      } catch(e) {}
     }
 
     function playBeep(freq, duration, type) {
       try {
         var ctx = new (window.AudioContext || window.webkitAudioContext)();
         var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
         osc.type = type || 'sine';
         osc.frequency.value = freq;
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+        osc.connect(ctx.destination);
         osc.start();
-        setTimeout(function() { osc.stop(); ctx.close(); }, duration);
+        setTimeout(() => { osc.stop(); ctx.close(); }, duration);
       } catch(e) {}
     }
 
@@ -443,70 +426,75 @@
       var input = document.getElementById('manualCode');
       var code = input.value.trim();
       if (!code) return;
-      handleCodeExecution(code);
+      handleScan(code);
       input.value = '';
     }
 
-    function handleCodeExecution(code) {
+    function handleScan(code) {
       if (isProcessing) return;
       isProcessing = true;
 
       var box = document.getElementById('result-box');
+      var contractPill = document.getElementById('res-contract');
       box.style.display = 'block';
       box.className = '';
       box.style.backgroundColor = '#1e293b';
-      document.getElementById('res-msg').innerText = '⏳ جاري الفحص والتسجيل...';
+      document.getElementById('res-msg').innerText = '⏳ جاري الفحص والتسجيل في ملف العقد...';
       document.getElementById('res-name').innerText = '';
-      document.getElementById('res-code').innerText = 'كود: ' + code;
+      contractPill.style.display = 'none';
+      document.getElementById('res-code').innerText = 'كود العامل: ' + code;
 
-      var targetUrl = SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&pin=' + encodeURIComponent(activePin);
-
-      fetch(targetUrl)
+      fetch(SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&pin=' + encodeURIComponent(activePin))
         .then(res => res.json())
         .then(res => {
           document.getElementById('res-msg').innerText = res.message;
           document.getElementById('res-name').innerText = res.workerName || '';
 
-          if (res.status === 'registered_ok' || res.status === 'allowed') {
-            if (res.status === 'registered_ok') {
-              incrementContractCounter();
-            }
-
-            if (activeRole === 'supervisor' && scannedCount >= activeLimit && res.status === 'registered_ok') {
-              box.className = 'bg-purple';
-              document.getElementById('res-msg').innerText = '🚨 تنبيه: تم الوصول للحد الأقصى (' + activeLimit + ' عامل)!';
-              playBeep(1200, 700, 'sawtooth');
-              if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
-            } else {
-              box.className = 'bg-green';
-              playBeep(900, 150, 'sine');
-            }
-          } else if (res.status === 'denied' || res.status === 'not_found') {
-            box.className = 'bg-red';
-            playBeep(250, 500, 'sawtooth');
-            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-          } else {
-            box.className = 'bg-orange';
-            playBeep(500, 300, 'square');
-            if (navigator.vibrate) navigator.vibrate(300);
+          if (res.contractName) {
+            contractPill.innerText = '📂 ' + res.contractName;
+            contractPill.style.display = 'inline-block';
           }
 
-          setTimeout(function() {
+          if (res.status === 'registered_ok') {
+            // المرحلة الأولى: مسح الخدمات الإدارية
+            incrementCounter();
+            box.className = 'bg-blue';
+            playBeep(850, 150, 'sine');
+          } else if (res.status === 'allowed') {
+            // المرحلة الثانية: اعتماد الأمن وتأكيد الحضور النهائي
+            incrementCounter();
+            box.className = 'bg-green';
+            playBeep(1050, 200, 'sine');
+          } else if (res.status === 'denied' || res.status === 'not_found' || res.status === 'error') {
+            box.className = 'bg-red';
+            playBeep(240, 500, 'sawtooth');
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+          } else {
+            // مسجل مسبقاً
+            box.className = 'bg-orange';
+            playBeep(500, 300, 'square');
+            if (navigator.vibrate) navigator.vibrate(250);
+          }
+
+          setTimeout(() => {
             isProcessing = false;
             box.style.display = 'none';
-          }, 1600);
+          }, 1800);
         })
         .catch(() => {
           box.className = 'bg-red';
           document.getElementById('res-msg').innerText = '❌ خطأ في الاتصال بالسيرفر!';
-          setTimeout(function() { isProcessing = false; }, 2000);
+          setTimeout(() => { isProcessing = false; }, 2000);
         });
     }
 
-    // الدخول التلقائي إذا كان المشرف قد سجل دخوله مسبقاً على هاتفه
-    if (activePin && activeRole) {
-      showScannerScreen();
-    }
+    window.addEventListener('load', function() {
+      var saved = localStorage.getItem('savedPin');
+      if (saved) {
+        document.getElementById('pinInput').value = saved;
+        loginWithPin();
+      }
+    });
   </script>
 </body>
 </html>
