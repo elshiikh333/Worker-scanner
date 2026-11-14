@@ -285,7 +285,7 @@
 
   <script>
     // الرابط الجديد المُحدث من Google Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1emamAb43Kdj2yPHyuYrqeXPoJTV5sHHrSb81A-HHrCBdMbA0oaJVtDQptoIscoEG/exec
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNgDtztPd_HyMbqU5TDbn36Ag2fWDUyv5QOmhJoUjk7J02jZEYz7HuvSNOfVJu7szj/exec";
 
     const VALID_PINS = ["1111", "2222", "3333", "4444", "9090"];
 
@@ -339,8 +339,16 @@
       }
     });
 
+    function normalizePinDigits(value) {
+      return String(value || '').replace(/[\u0660-\u0669\u06f0-\u06f9]/g, function(digit) {
+        var code = digit.charCodeAt(0);
+        var zero = code >= 0x06F0 ? 0x06F0 : 0x0660;
+        return String(code - zero);
+      });
+    }
+
     function loginWithPin() {
-      var pin = document.getElementById('pinInput').value.trim();
+      var pin = normalizePinDigits(document.getElementById('pinInput').value).trim();
       if (!pin) return;
 
       var btn = document.getElementById('loginBtn');
