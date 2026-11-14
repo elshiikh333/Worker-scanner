@@ -1,293 +1,188 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>منظومة المسح المزدوج للعقود الأربعة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#cd1719">
+  <meta name="description" content="منظومة تسجيل ودخول عمال المقاول بشركة الإسكندرية للزيوت المعدنية AMOC">
+  <title>AMOC | تسجيل ودخول عمال المقاول</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root {
-      --bg-main: #0b0f19;
-      --card-bg: rgba(22, 30, 49, 0.88);
-      --border-color: rgba(255, 255, 255, 0.09);
-      --accent-green: #10b981;
-      --accent-blue: #0284c7;
-      --accent-cyan: #38bdf8;
-      --text-muted: #94a3b8;
+      color-scheme: light;
+      --page: #F8F8FF;
+      --surface: #ffffff;
+      --line: #e5e5eb;
+      --text: #303030;
+      --muted: #707078;
+      --primary: #cd1719;
+      --dark: #182333;
+      --radius: 15px;
     }
-
     * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--page); }
     body {
-      font-family: 'Segoe UI', Tahoma, system-ui, sans-serif;
+      min-height: 100vh; min-height: 100svh;
       margin: 0;
-      padding: 16px 14px 28px;
-      background: radial-gradient(circle at top, #1e1b4b 0%, var(--bg-main) 65%);
-      color: #f8fafc;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: max(12px, env(safe-area-inset-top)) 14px max(12px, env(safe-area-inset-bottom));
+      display: flex; justify-content: center;
+      background: var(--page); color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      border-top: 4px solid var(--primary);
     }
-
-    .container { width: 100%; max-width: 420px; }
-
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 14px;
+    button, input { font: inherit; }
+    .container { width: 100%; max-width: 460px; }
+    .brand-header {
+      display: flex; align-items: center; gap: 10px;
+      min-height: 60px; margin-bottom: 12px;
     }
-    .header h2 {
-      margin: 0;
-      font-size: 19px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .brand-logo-link {
+      flex: 0 0 61px; width: 61px; height: 58px;
+      display: grid; place-items: center; overflow: hidden;
+      border-radius: 10px; background: #fff;
     }
-
-    /* شاشة تسجيل الدخول */
-    #login-screen {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 18px;
-      padding: 24px 18px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .pin-input {
-      width: 100%;
-      padding: 13px;
-      font-size: 24px;
-      letter-spacing: 6px;
-      text-align: center;
-      border-radius: 12px;
-      border: 2px solid #334155;
-      background: #0f172a;
-      color: #38bdf8;
-      font-weight: 800;
-      outline: none;
-      margin: 16px 0;
-    }
-    .pin-input:focus { border-color: #38bdf8; }
-    .btn-login {
-      width: 100%;
-      padding: 13px;
-      font-size: 16px;
-      font-weight: bold;
-      background: linear-gradient(135deg, #2563eb, #4f46e5);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-
-    /* شريط المستخدم النشط */
-    .role-bar {
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 12px;
-      padding: 9px 12px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .role-badge { font-size: 14px; font-weight: 800; color: #38bdf8; }
-    .btn-logout {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-      border-radius: 8px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* كارت العداد */
-    .counter-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 12px 18px;
-      margin-bottom: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .counter-val {
-      font-size: 34px;
-      font-weight: 900;
-      color: var(--accent-green);
-      line-height: 1.1;
-      text-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
-      cursor: pointer;
-    }
-    .stage-badge {
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px dashed rgba(56, 189, 248, 0.4);
-      padding: 7px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      color: #bae6fd;
-      text-align: center;
-    }
-    .stage-badge strong { display: block; font-size: 14px; color: #38bdf8; margin-top: 2px; }
-
-    /* إطار الكاميرا */
-    .scanner-wrapper {
-      position: relative;
-      background: #000;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 2px solid rgba(56, 189, 248, 0.5);
-    }
-    #reader { width: 100%; border: none !important; }
-    #reader video { border-radius: 18px; object-fit: cover; }
-
-    /* الإدخال اليدوي */
-    .manual-box {
-      margin-top: 14px;
-      display: flex;
-      gap: 8px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 6px;
-    }
-    .manual-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-size: 16px;
-      padding: 10px;
-      text-align: center;
-      font-weight: bold;
-    }
-    .manual-btn {
-      background: linear-gradient(135deg, #10b981, #059669);
-      border: none;
-      border-radius: 10px;
-      padding: 10px 18px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* بطاقة النتيجة */
-    #result-box {
-      display: none;
-      margin-top: 14px;
-      padding: 16px 18px;
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
-    }
-    .worker-name { font-size: 22px; font-weight: 800; margin: 5px 0; display: block; }
-    .contract-pill {
-      display: inline-block;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 3px 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: bold;
-      margin-top: 4px;
-    }
+    .brand-logo-link img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy h1 { margin: 0; color: var(--text); font-size: clamp(15px, 4vw, 18px); font-weight: 800; line-height: 1.45; letter-spacing: -.3px; }
+    .brand-name { white-space: nowrap; }
+    .brand-copy p { margin: 3px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .amoc-tag { display: inline-block; margin-inline-start: 3px; color: var(--primary); direction: ltr; font: 800 11px/1.4 Arial, sans-serif; vertical-align: 1px; }
+    .panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: 0 5px 15px rgba(24,35,51,.045); }
+    #login-screen { padding: 22px 18px 20px; text-align: center; border-top: 3px solid var(--primary); }
+    .login-icon { width: 46px; height: 46px; display: grid; place-items: center; margin: 0 auto 8px; border-radius: 50%; background: #fceced; color: var(--primary); }
+    .login-icon svg { width: 25px; height: 25px; }
+    #login-screen h2 { margin: 0; font-size: 20px; font-weight: 750; line-height: 1.4; }
+    .login-hint { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .pin-input { width: 100%; height: 56px; margin: 17px 0 12px; padding: 8px 14px; border: 1px solid #dcdce3; border-radius: 12px; outline: none; background: var(--page); color: var(--dark); font-size: 24px; font-weight: 800; letter-spacing: 9px; text-align: center; transition: border-color .18s, box-shadow .18s; }
+    .pin-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(205,23,25,.1); }
+    .btn-login { width: 100%; min-height: 49px; border: 0; border-radius: 30px; background: var(--primary); color: #fff; font-size: 16px; font-weight: 750; cursor: pointer; box-shadow: 0 5px 12px rgba(205,23,25,.13); }
+    .btn-login:active, .manual-btn:active { transform: translateY(1px); }
+    #login-err { display: none; margin-top: 10px; color: var(--primary); font-size: 13px; font-weight: 700; }
+    .role-bar { min-height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; padding: 5px 11px 5px 7px; border-radius: 30px; background: #303030; color: #fff; }
+    .role-badge { font-size: 12px; font-weight: 700; }
+    .btn-logout { flex-shrink: 0; min-height: 30px; padding: 4px 10px; border: 1px solid #6b6b6b; border-radius: 30px; background: transparent; color: #fff; font-size: 10px; font-weight: 650; cursor: pointer; }
+    .counter-card { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; padding: 8px 13px; border-inline-start: 3px solid var(--primary); }
+    .counter-meta { color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .counter-val { margin-top: 1px; color: var(--primary); font-size: 29px; font-weight: 850; line-height: 1; font-variant-numeric: tabular-nums; cursor: pointer; }
+    .stage-badge { max-width: 53%; padding: 5px 8px; border-inline-start: 1px solid var(--line); color: var(--muted); font-size: 10px; text-align: center; line-height: 1.35; }
+    .stage-badge strong { display: block; margin-top: 3px; color: var(--text); font-size: 11px; }
+    .scanner-wrapper { position: relative; height: clamp(240px, 42svh, 330px); overflow: hidden; border: 2px solid #303030; border-radius: 15px; background: var(--dark); box-shadow: 0 6px 16px rgba(24,35,51,.12); }
+    #reader { width: 100%; height: 100%; border: none !important; background: transparent; }
+    #reader > div:first-child { height: 100% !important; }
+    #reader__scan_region { min-height: 100% !important; height: 100% !important; }
+    #reader video { width: 100% !important; height: 100% !important; border-radius: 12px; object-fit: cover; }
+    #reader__dashboard, #qr-shaded-region { display: none !important; }
+    .scan-guide { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+    .scan-guide-frame { position: relative; width: min(256px, 80cqw, 80cqh); height: min(256px, 80cqw, 80cqh); border: 1px solid rgba(255,255,255,.24); border-radius: 11px; background: transparent; box-shadow: 0 0 0 100vmax rgba(0,0,0,.18); }
+    .scanner-wrapper { container-type: size; }
+    .scan-guide-frame::before, .scan-guide-frame::after { position: absolute; inset: -2px; border: 3px solid transparent; border-radius: 12px; content: ""; }
+    .scan-guide-frame::before { border-top-color: #fff; border-right-color: #fff; clip-path: polygon(0 0, 31% 0, 31% 7%, 7% 7%, 7% 31%, 0 31%, 0 0, 100% 0, 100% 31%, 93% 31%, 93% 7%, 69% 7%, 69% 0); }
+    .scan-guide-frame::after { border-bottom-color: #fff; border-left-color: #fff; clip-path: polygon(0 69%, 7% 69%, 7% 93%, 31% 93%, 31% 100%, 0 100%, 0 69%, 100% 69%, 100% 100%, 69% 100%, 69% 93%, 93% 93%, 93% 69%); }
+    .scan-caption { position: absolute; bottom: 8px; left: 8px; right: 8px; color: #fff; font-size: 11px; text-align: center; text-shadow: 0 1px 5px #000; }
+    .manual-box { display: flex; gap: 7px; margin-top: 9px; padding: 5px; }
+    .manual-input { flex: 1; min-width: 0; height: 40px; padding: 7px 9px; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 14px; font-weight: 650; text-align: center; }
+    .manual-input::placeholder { color: var(--muted); font-size: 12px; font-weight: 500; }
+    .manual-input:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; border-radius: 8px; }
+    .manual-btn { min-width: 80px; padding: 8px 12px; border: 0; border-radius: 30px; background: var(--primary); color: #fff; font-size: 13px; font-weight: 750; cursor: pointer; }
+    #result-box { display: none; margin-top: 9px; padding: 12px 14px; border-radius: 14px; text-align: center; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+    .worker-name { display: block; margin: 4px 0; font-size: 19px; font-weight: 800; }
+    .contract-pill { display: inline-block; margin-top: 4px; padding: 3px 10px; border-radius: 10px; background: rgba(0,0,0,.22); font-size: 12px; font-weight: 700; }
     .bg-green { background: linear-gradient(135deg, #059669, #047857); }
-    .bg-blue  { background: linear-gradient(135deg, #0284c7, #0369a1); }
-    .bg-red   { background: linear-gradient(135deg, #dc2626, #b91c1c); }
-    .bg-orange{ background: linear-gradient(135deg, #d97706, #b45309); }
-
-    .signature {
-      margin-top: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 6px 16px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
+    .bg-blue { background: linear-gradient(135deg, #147db3, #075f91); }
+    .bg-red { background: linear-gradient(135deg, #c23b44, #982b36); }
+    .bg-orange { background: linear-gradient(135deg, #c47712, #99540b); }
+    .signature { width: fit-content; display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px auto 0; padding: 4px 12px; color: #77777f; font-size: 10px; letter-spacing: .2px; direction: ltr; }
+    .sig-name { color: var(--primary); font-size: 12px; font-weight: 800; }
+    @media (max-height: 700px) {
+      body { padding-top: 7px; padding-bottom: 7px; }
+      .brand-header { min-height: 50px; margin-bottom: 8px; }
+      .brand-logo-link { width: 54px; height: 50px; flex-basis: 54px; }
+      #login-screen { padding: 17px 16px; }
+      .login-icon { width: 40px; height: 40px; margin-bottom: 5px; }
+      .pin-input { height: 50px; margin: 12px 0 9px; }
+      .role-bar { min-height: 40px; margin-bottom: 8px; }
+      .counter-card { min-height: 58px; margin-bottom: 8px; padding-block: 6px; }
+      .scanner-wrapper { height: clamp(220px, 40svh, 280px); }
+      #result-box { margin-top: 6px; padding: 6px 10px; }
+      .worker-name { margin: 2px 0; font-size: 17px; }
+      .contract-pill { margin-top: 2px; padding: 2px 10px; font-size: 11px; }
+      .signature { margin-top: 3px; padding-block: 3px; }
     }
-    .sig-name {
-      font-weight: 800;
-      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    @media (max-width: 360px) {
+      body { padding-right: 11px; padding-left: 11px; }
+      .brand-header { gap: 8px; }
+      .brand-copy h1 { font-size: 14px; }
+      .brand-copy p { font-size: 11px; }
+      .counter-card { padding-inline: 10px; }
+      .stage-badge { padding-inline: 7px; }
     }
   </style>
 </head>
 <body>
+  <main class="container">
+    <header class="brand-header">
+      <a class="brand-logo-link" href="https://www.amoceg.com/ar" target="_blank" rel="noopener noreferrer" aria-label="زيارة الموقع الرسمي لشركة أموك">
+        <img src="https://www.amoceg.com/images/logo.png" alt="شعار شركة الإسكندرية للزيوت المعدنية AMOC">
+      </a>
+      <div class="brand-copy">
+        <h1>شركة الإسكندرية للزيوت المعدنية <span class="amoc-tag">AMOC</span></h1>
+        <p>منظومة تسجيل ودخول عمال المقاول بالشركة</p>
+      </div>
+    </header>
 
-  <div class="container">
-    <div class="header">
-      <span style="font-size: 24px;">⚡</span>
-      <h2>منظومة المسح المزدوج للعقود الأربعة</h2>
-    </div>
-
-    <!-- 1. شاشة تسجيل الدخول -->
-    <div id="login-screen">
-      <div style="font-size: 34px; margin-bottom: 6px;">🔐</div>
-      <h3 style="margin: 0 0 6px;">دخول الخدمات الإدارية / الأمن</h3>
-      <p style="margin: 0; font-size: 13px; color: var(--text-muted);">أدخل الكود السري (PIN) الخاص بك</p>
-      <input type="password" inputmode="numeric" id="pinInput" class="pin-input" placeholder="••••" onkeydown="if(event.key==='Enter') loginWithPin()">
+    <section id="login-screen" class="panel" aria-labelledby="login-title">
+      <div class="login-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1"/><path d="M12 16v2"/></svg>
+      </div>
+      <h2 id="login-title">دخول الخدمات الإدارية / الأمن</h2>
+      <p class="login-hint">أدخل الكود السري (PIN) الخاص بك</p>
+      <input type="password" inputmode="numeric" id="pinInput" class="pin-input" placeholder="••••" autocomplete="current-password" aria-label="الكود السري PIN" onkeydown="if(event.key==='Enter') loginWithPin()">
       <button class="btn-login" id="loginBtn" onclick="loginWithPin()">دخول للمنظومة</button>
-      <div id="login-err" style="color: #f87171; font-size: 14px; margin-top: 10px; display: none; font-weight: bold;"></div>
-    </div>
+      <div id="login-err" role="alert"></div>
+    </section>
 
-    <!-- 2. شاشة المسح الرئيسية -->
-    <div id="app-screen" style="display: none;">
+    <section id="app-screen" style="display:none" aria-label="شاشة تسجيل الحضور">
       <div class="role-bar">
         <span class="role-badge" id="activeRoleName">...</span>
-        <button class="btn-logout" onclick="logoutPin()">🔄 تغيير الحساب</button>
+        <button class="btn-logout" onclick="logoutPin()">تغيير الحساب</button>
       </div>
 
-      <div class="counter-card">
-        <div style="text-align: right;">
-          <div style="font-size: 13px; color: var(--text-muted);" id="counterLabel">إجمالي المسح اليوم</div>
-          <div class="counter-val" id="scanCounter" title="انقر مرتين للتصفير اليدوي">0</div>
+      <div class="counter-card panel">
+        <div>
+          <div class="counter-meta" id="counterLabel">إجمالي المسح اليوم</div>
+          <div class="counter-val" id="scanCounter" title="انقر مرتين للتصفير اليدوي" aria-live="polite">0</div>
         </div>
-        <div class="stage-badge">
-          المرحلة النشطة
-          <strong id="stageName">الكل (4 عقود)</strong>
-        </div>
+        <div class="stage-badge">المرحلة النشطة<strong id="stageName">الكل (4 عقود)</strong></div>
       </div>
 
-      <div class="scanner-wrapper">
+      <div class="scanner-wrapper" aria-label="منطقة مسح رمز العامل">
         <div id="reader"></div>
+        <div class="scan-guide" aria-hidden="true"><div class="scan-guide-frame"></div></div>
+        <div class="scan-caption">وجّه رمز العامل داخل الإطار</div>
       </div>
 
-      <div class="manual-box">
-        <input type="number" id="manualCode" class="manual-input" placeholder="🔢 أدخل كود العامل يدوياً..." onkeydown="if(event.key==='Enter') submitManual()">
-        <button class="manual-btn" onclick="submitManual()">تأكيد ➔</button>
+      <div class="manual-box panel">
+        <input type="number" id="manualCode" class="manual-input" placeholder="أدخل كود العامل يدويًا" aria-label="كود العامل يدويًا" onkeydown="if(event.key==='Enter') submitManual()">
+        <button class="manual-btn" onclick="submitManual()">تأكيد</button>
       </div>
 
       <div id="result-box">
-        <div id="res-msg" style="font-size: 15px; font-weight: 600;"></div>
+        <div id="res-msg" style="font-size:14px;font-weight:650"></div>
         <span class="worker-name" id="res-name"></span>
-        <div id="res-contract" class="contract-pill" style="display: none;"></div>
-        <div id="res-code" style="font-size: 12px; opacity: 0.85; margin-top: 4px;"></div>
+        <div id="res-contract" class="contract-pill" style="display:none"></div>
+        <div id="res-code" style="font-size:11px;opacity:.85;margin-top:4px"></div>
       </div>
-    </div>
+    </section>
 
-    <div class="signature">
-      <span style="font-size: 13px; color: #94a3b8;">Powered by</span>
-      <span class="sig-name">Meto 🚀</span>
-    </div>
-  </div>
+    <footer class="signature"><span>Powered by</span><span class="sig-name">Elshiikh</span></footer>
+  </main>
 
   <script>
-    // الرابط الجديد المُحدث من Google Apps Script
+    // عنوان Google Apps Script الحالي محفوظ كما هو دون تعديل.
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNgDtztPd_HyMbqU5TDbn36Ag2fWDUyv5QOmhJoUjk7J02jZEYz7HuvSNOfVJu7szj/exec";
-
     const VALID_PINS = ["1111", "2222", "3333", "4444", "9090"];
+    const COUNTER_TIME_ZONE = 'Africa/Cairo';
 
     var activePin = '';
     var activeRole = '';
@@ -297,18 +192,42 @@
     var scannedCount = 0;
     var html5QrCode = null;
 
-    function getTodayKey() {
-      var d = new Date();
-      return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    // مفتاح اليوم ثابت حسب توقيت القاهرة، وليس حسب منطقة الجهاز.
+    function getTodayKey(now = new Date()) {
+      var parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: COUNTER_TIME_ZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).formatToParts(now);
+      var values = {};
+      parts.forEach(function(part) {
+        if (part.type !== 'literal') values[part.type] = part.value;
+      });
+      return values.year + '-' + values.month + '-' + values.day;
+    }
+
+    function refreshCounterForDate() {
+      if (!activeKey) return;
+      var dateKey = 'date_' + activeKey;
+      var countKey = 'count_' + activeKey;
+      var today = getTodayKey();
+      if (localStorage.getItem(dateKey) !== today) {
+        scannedCount = 0;
+        localStorage.setItem(dateKey, today);
+        localStorage.setItem(countKey, '0');
+        var counter = document.getElementById('scanCounter');
+        if (counter) counter.innerText = '0';
+      }
     }
 
     function loadCounter() {
       var dateKey = 'date_' + activeKey;
       var countKey = 'count_' + activeKey;
       var today = getTodayKey();
-
       if (localStorage.getItem(dateKey) === today) {
         scannedCount = parseInt(localStorage.getItem(countKey) || '0', 10);
+        if (!Number.isFinite(scannedCount) || scannedCount < 0) scannedCount = 0;
       } else {
         scannedCount = 0;
         localStorage.setItem(dateKey, today);
@@ -318,26 +237,27 @@
     }
 
     function incrementCounter() {
-      var dateKey = 'date_' + activeKey;
-      var countKey = 'count_' + activeKey;
-      var today = getTodayKey();
-
-      if (localStorage.getItem(dateKey) !== today) {
-        scannedCount = 0;
-        localStorage.setItem(dateKey, today);
-      }
+      refreshCounterForDate();
       scannedCount++;
-      localStorage.setItem(countKey, scannedCount);
+      localStorage.setItem('count_' + activeKey, String(scannedCount));
       document.getElementById('scanCounter').innerText = scannedCount;
     }
 
     document.getElementById('scanCounter').addEventListener('dblclick', function() {
       if (confirm('هل تريد تصفير عداد (' + activeName + ') لليوم؟')) {
         scannedCount = 0;
+        localStorage.setItem('date_' + activeKey, getTodayKey());
         localStorage.setItem('count_' + activeKey, '0');
         document.getElementById('scanCounter').innerText = '0';
       }
     });
+
+    // يعمل حتى لو ظلت شاشة المسح مفتوحة عند منتصف الليل، ويعيد التحقق عند الرجوع للتطبيق.
+    setInterval(refreshCounterForDate, 15000);
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) refreshCounterForDate();
+    });
+    window.addEventListener('focus', refreshCounterForDate);
 
     function normalizePinDigits(value) {
       return String(value || '').replace(/[\u0660-\u0669\u06f0-\u06f9]/g, function(digit) {
@@ -353,38 +273,35 @@
 
       var btn = document.getElementById('loginBtn');
       var err = document.getElementById('login-err');
-
       if (VALID_PINS.indexOf(pin) === -1) {
         localStorage.removeItem('savedPin');
-        err.innerText = '❌ كود الدخول غير صحيح! استخدم الأكواد المعتمدة الجديدة (1111، 2222، 3333، 4444، 9090).';
+        err.innerText = 'كود الدخول غير صحيح. استخدم أحد الأكواد المعتمدة.';
         err.style.display = 'block';
         return;
       }
 
-      btn.innerText = '⏳ جاري التحقق...';
+      btn.innerText = 'جاري التحقق...';
       err.style.display = 'none';
-
       fetch(SCRIPT_URL + '?action=login&pin=' + encodeURIComponent(pin) + '&t=' + Date.now())
-        .then(res => res.json())
-        .then(data => {
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
           btn.innerText = 'دخول للمنظومة';
           if (data.status === 'ok') {
             activePin = pin;
             activeRole = data.role;
             activeName = data.name;
             activeKey = data.key;
-
             localStorage.setItem('savedPin', pin);
             showScanner();
           } else {
             localStorage.removeItem('savedPin');
-            err.innerText = data.message || '❌ كود الدخول غير مفعل!';
+            err.innerText = data.message || 'كود الدخول غير مفعل.';
             err.style.display = 'block';
           }
         })
-        .catch(() => {
+        .catch(function() {
           btn.innerText = 'دخول للمنظومة';
-          err.innerText = '❌ تعذر الاتصال بالسيرفر، تأكد من الإنترنت!';
+          err.innerText = 'تعذر الاتصال بالسيرفر، تأكد من الإنترنت.';
           err.style.display = 'block';
         });
     }
@@ -392,26 +309,22 @@
     function showScanner() {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app-screen').style.display = 'block';
-
       if (activeRole === 'security' || activePin === '9090') {
-        document.getElementById('activeRoleName').innerText = '🛡️ ' + activeName;
+        document.getElementById('activeRoleName').innerText = 'مسؤول الأمن / ' + activeName;
         document.getElementById('counterLabel').innerText = 'حضور مؤكد عبر البوابة اليوم';
         document.getElementById('stageName').innerText = 'المرحلة 2: تأكيد الأمن';
       } else {
-        document.getElementById('activeRoleName').innerText = '📋 ' + activeName;
+        document.getElementById('activeRoleName').innerText = 'الخدمات الإدارية / ' + activeName;
         document.getElementById('counterLabel').innerText = 'مسح إداري أولي اليوم';
         document.getElementById('stageName').innerText = 'المرحلة 1: خدمات إدارية';
       }
-
       loadCounter();
       startCamera();
     }
 
     function logoutPin() {
       localStorage.removeItem('savedPin');
-      if (html5QrCode) {
-        html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
-      }
+      if (html5QrCode) html5QrCode.stop().then(function() { html5QrCode.clear(); }).catch(function() {});
       document.getElementById('app-screen').style.display = 'none';
       document.getElementById('login-screen').style.display = 'block';
       document.getElementById('pinInput').value = '';
@@ -419,15 +332,19 @@
 
     function startCamera() {
       try {
-        if (!html5QrCode) {
-          html5QrCode = new Html5Qrcode("reader");
-        }
+        if (!html5QrCode) html5QrCode = new Html5Qrcode('reader');
         html5QrCode.start(
-          { facingMode: "environment" },
-          { fps: 15, qrbox: { width: 250, height: 250 } },
+          { facingMode: 'environment' },
+          {
+            fps: 15,
+            qrbox: function(viewfinderWidth, viewfinderHeight) {
+              var size = Math.floor(Math.min(256, viewfinderWidth * .8, viewfinderHeight * .8));
+              return { width: size, height: size };
+            }
+          },
           function(code) { handleScan(code); }
-        ).catch(e => console.error("Camera error:", e));
-      } catch(e) {}
+        ).catch(function(e) { console.error('Camera error:', e); });
+      } catch (e) {}
     }
 
     function playBeep(freq, duration, type) {
@@ -438,8 +355,8 @@
         osc.frequency.value = freq;
         osc.connect(ctx.destination);
         osc.start();
-        setTimeout(() => { osc.stop(); ctx.close(); }, duration);
-      } catch(e) {}
+        setTimeout(function() { osc.stop(); ctx.close(); }, duration);
+      } catch (e) {}
     }
 
     function submitManual() {
@@ -453,55 +370,42 @@
     function handleScan(code) {
       if (isProcessing) return;
       isProcessing = true;
-
       var box = document.getElementById('result-box');
       var contractPill = document.getElementById('res-contract');
       box.style.display = 'block';
       box.className = '';
       box.style.backgroundColor = '#1e293b';
-      document.getElementById('res-msg').innerText = '⏳ جاري الفحص والتسجيل في ملف العقد...';
+      document.getElementById('res-msg').innerText = 'جاري الفحص والتسجيل في ملف العقد...';
       document.getElementById('res-name').innerText = '';
       contractPill.style.display = 'none';
       document.getElementById('res-code').innerText = 'كود العامل: ' + code;
 
       fetch(SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&pin=' + encodeURIComponent(activePin) + '&t=' + Date.now())
-        .then(res => res.json())
-        .then(res => {
+        .then(function(res) { return res.json(); })
+        .then(function(res) {
           document.getElementById('res-msg').innerText = res.message;
           document.getElementById('res-name').innerText = res.workerName || '';
-
           if (res.contractName) {
             contractPill.innerText = '📂 ' + res.contractName;
             contractPill.style.display = 'inline-block';
           }
-
           if (res.status === 'registered_ok') {
-            incrementCounter();
-            box.className = 'bg-blue';
-            playBeep(850, 150, 'sine');
+            incrementCounter(); box.className = 'bg-blue'; playBeep(850, 150, 'sine');
           } else if (res.status === 'allowed') {
-            incrementCounter();
-            box.className = 'bg-green';
-            playBeep(1050, 200, 'sine');
+            incrementCounter(); box.className = 'bg-green'; playBeep(1050, 200, 'sine');
           } else if (res.status === 'denied' || res.status === 'not_found' || res.status === 'error') {
-            box.className = 'bg-red';
-            playBeep(240, 500, 'sawtooth');
+            box.className = 'bg-red'; playBeep(240, 500, 'sawtooth');
             if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
           } else {
-            box.className = 'bg-orange';
-            playBeep(500, 300, 'square');
+            box.className = 'bg-orange'; playBeep(500, 300, 'square');
             if (navigator.vibrate) navigator.vibrate(250);
           }
-
-          setTimeout(() => {
-            isProcessing = false;
-            box.style.display = 'none';
-          }, 1800);
+          setTimeout(function() { isProcessing = false; box.style.display = 'none'; }, 1800);
         })
-        .catch(() => {
+        .catch(function() {
           box.className = 'bg-red';
-          document.getElementById('res-msg').innerText = '❌ خطأ في الاتصال بالسيرفر!';
-          setTimeout(() => { isProcessing = false; }, 2000);
+          document.getElementById('res-msg').innerText = 'خطأ في الاتصال بالسيرفر.';
+          setTimeout(function() { isProcessing = false; }, 2000);
         });
     }
 
