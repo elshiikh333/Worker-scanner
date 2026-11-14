@@ -314,4 +314,200 @@
         localStorage.setItem(dateKey, today);
         localStorage.setItem(countKey, '0');
       }
-      document.getElementById('
+      document.getElementById('scanCounter').innerText = scannedCount;
+    }
+
+    function incrementCounter() {
+      var dateKey = 'date_' + activeKey;
+      var countKey = 'count_' + activeKey;
+      var today = getTodayKey();
+
+      if (localStorage.getItem(dateKey) !== today) {
+        scannedCount = 0;
+        localStorage.setItem(dateKey, today);
+      }
+      scannedCount++;
+      localStorage.setItem(countKey, scannedCount);
+      document.getElementById('scanCounter').innerText = scannedCount;
+    }
+
+    document.getElementById('scanCounter').addEventListener('dblclick', function() {
+      if (confirm('هل تريد تصفير عداد (' + activeName + ') لليوم؟')) {
+        scannedCount = 0;
+        localStorage.setItem('count_' + activeKey, '0');
+        document.getElementById('scanCounter').innerText = '0';
+      }
+    });
+
+    function loginWithPin() {
+      var pin = document.getElementById('pinInput').value.trim();
+      if (!pin) return;
+
+      var btn = document.getElementById('loginBtn');
+      var err = document.getElementById('login-err');
+
+      // رفض فوري للأكواد القديمة (مثل 1010، 2020) حتى لو كان السيرفر لم يُنشر بعد
+      if (VALID_PINS.indexOf(pin) === -1) {
+        localStorage.removeItem('savedPin');
+        err.innerText = '❌ كود الدخول غير صحيح! استخدم الأكواد المعتمدة الجديدة.';
+        err.style.display = 'block';
+        return;
+      }
+
+      btn.innerText = '⏳ جاري التحقق...';
+      err.style.display = 'none';
+
+      fetch(SCRIPT_URL + '?action=login&pin=' + encodeURIComponent(pin) + '&t=' + Date.now())
+        .then(res => res.json())
+        .then(data => {
+          btn.innerText = 'دخول للمنظومة';
+          if (data.status === 'ok') {
+            activePin = pin;
+            activeRole = data.role;
+            activeName = data.name;
+            activeKey = data.key;
+
+            localStorage.setItem('savedPin', pin);
+            showScanner();
+          } else {
+            localStorage.removeItem('savedPin');
+            err.innerText = data.message || '❌ كود الدخول غير مفعل على السيرفر! تأكد من عمل New Deployment في Apps Script.';
+            err.style.display = 'block';
+          }
+        })
+        .catch(() => {
+          btn.innerText = 'دخول للمنظومة';
+          err.innerText = '❌ تعذر الاتصال بالسيرفر، تأكد من الإنترنت!';
+          err.style.display = 'block';
+        });
+    }
+
+    function showScanner() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+
+      if (activeRole === 'security' || activePin === '9090') {
+        document.getElementById('activeRoleName').innerText = '🛡️ ' + activeName;
+        document.getElementById('counterLabel').innerText = 'حضور مؤكد عبر البوابة اليوم';
+        document.getElementById('stageName').innerText = 'المرحلة 2: تأكيد الأمن';
+      } else {
+        document.getElementById('activeRoleName').innerText = '📋 ' + activeName;
+        document.getElementById('counterLabel').innerText = 'مسح إداري أولي اليوم';
+        document.getElementById('stageName').innerText = 'المرحلة 1: خدمات إدارية';
+      }
+
+      loadCounter();
+      startCamera();
+    }
+
+    function logoutPin() {
+      localStorage.removeItem('savedPin');
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
+      }
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'block';
+      document.getElementById('pinInput').value = '';
+    }
+
+    function startCamera() {
+      try {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("reader");
+        }
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 15, qrbox: { width: 250, height: 250 } },
+          function(code) { handleScan(code); }
+        ).catch(e => console.error("Camera error:", e));
+      } catch(e) {}
+    }
+
+    function playBeep(freq, duration, type) {
+      try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        osc.type = type || 'sine';
+        osc.frequency.value = freq;
+        osc.connect(ctx.destination);
+        osc.start();
+        setTimeout(() => { osc.stop(); ctx.close(); }, duration);
+      } catch(e) {}
+    }
+
+    function submitManual() {
+      var input = document.getElementById('manualCode');
+      var code = input.value.trim();
+      if (!code) return;
+      handleScan(code);
+      input.value = '';
+    }
+
+    function handleScan(code) {
+      if (isProcessing) return;
+      isProcessing = true;
+
+      var box = document.getElementById('result-box');
+      var contractPill = document.getElementById('res-contract');
+      box.style.display = 'block';
+      box.className = '';
+      box.style.backgroundColor = '#1e293b';
+      document.getElementById('res-msg').innerText = '⏳ جاري الفحص والتسجيل في ملف العقد...';
+      document.getElementById('res-name').innerText = '';
+      contractPill.style.display = 'none';
+      document.getElementById('res-code').innerText = 'كود العامل: ' + code;
+
+      fetch(SCRIPT_URL + '?code=' + encodeURIComponent(code) + '&pin=' + encodeURIComponent(activePin) + '&t=' + Date.now())
+        .then(res => res.json())
+        .then(res => {
+          document.getElementById('res-msg').innerText = res.message;
+          document.getElementById('res-name').innerText = res.workerName || '';
+
+          if (res.contractName) {
+            contractPill.innerText = '📂 ' + res.contractName;
+            contractPill.style.display = 'inline-block';
+          }
+
+          if (res.status === 'registered_ok') {
+            incrementCounter();
+            box.className = 'bg-blue';
+            playBeep(850, 150, 'sine');
+          } else if (res.status === 'allowed') {
+            incrementCounter();
+            box.className = 'bg-green';
+            playBeep(1050, 200, 'sine');
+          } else if (res.status === 'denied' || res.status === 'not_found' || res.status === 'error') {
+            box.className = 'bg-red';
+            playBeep(240, 500, 'sawtooth');
+            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+          } else {
+            box.className = 'bg-orange';
+            playBeep(500, 300, 'square');
+            if (navigator.vibrate) navigator.vibrate(250);
+          }
+
+          setTimeout(() => {
+            isProcessing = false;
+            box.style.display = 'none';
+          }, 1800);
+        })
+        .catch(() => {
+          box.className = 'bg-red';
+          document.getElementById('res-msg').innerText = '❌ خطأ في الاتصال بالسيرفر!';
+          setTimeout(() => { isProcessing = false; }, 2000);
+        });
+    }
+
+    // مسح أي كود قديم محفوظ تلقائياً عند فتح الصفحة
+    window.addEventListener('load', function() {
+      var saved = localStorage.getItem('savedPin');
+      if (saved && VALID_PINS.indexOf(saved) !== -1) {
+        document.getElementById('pinInput').value = saved;
+        loginWithPin();
+      } else {
+        localStorage.removeItem('savedPin');
+      }
+    });
+  </script>
+</body>
+</html>
